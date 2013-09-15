@@ -12,8 +12,9 @@ type values struct {
 }
 
 type operation struct {
-	p      []byte
-	values chan values
+	p       []byte
+	values  chan values
+	written int
 }
 
 type rateLimiter struct {
@@ -50,18 +51,19 @@ func (rl *rateLimiter) write() {
 	if rl.op == nil {
 		return
 	}
+
 	p := rl.op.p
-	if rl.remaining < len(p) {
+	if rl.remaining < len(rl.op.p) {
 		p = rl.op.p[:rl.remaining]
 	}
 	rl.remaining -= len(p)
 
 	n, err := rl.action(p)
 	rl.op.p = rl.op.p[n:]
-	rl.written += n
+	rl.op.written += n
 
 	if len(rl.op.p) == 0 || err != nil {
-		rl.op.values <- values{rl.written, err}
+		rl.op.values <- values{rl.op.written, err}
 		rl.op = nil
 	}
 }
