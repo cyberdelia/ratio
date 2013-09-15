@@ -13,7 +13,7 @@ import (
 
 func TestWriter(t *testing.T) {
 	buf := new(bytes.Buffer)
-	rw := NewRateWriter(buf, 2, time.Millisecond)
+	rw := RateLimitedWriter(buf, 2, time.Millisecond)
 	defer rw.Close()
 	io.Copy(rw, strings.NewReader("aloha"))
 	if buf.String() != "aloha" {
@@ -24,7 +24,7 @@ func TestWriter(t *testing.T) {
 
 func TestReader(t *testing.T) {
 	buf := new(bytes.Buffer)
-	rr := NewRateReader(strings.NewReader("aloha"), 2, time.Millisecond)
+	rr := RateLimitedReader(strings.NewReader("aloha"), 2, time.Millisecond)
 	defer rr.Close()
 	io.Copy(buf, rr)
 	if buf.String() != "aloha" {
@@ -43,7 +43,7 @@ func BenchmarkWriter(b *testing.B) {
 	b.SetBytes(1e6)
 	b.StartTimer()
 	for i := 0; i < b.N; i++ {
-		rw := NewRateWriter(ioutil.Discard, 2e5, time.Second)
+		rw := RateLimitedWriter(ioutil.Discard, 2e5, time.Second)
 		rw.Write(buf)
 		rw.Close()
 	}
@@ -55,7 +55,7 @@ func BenchmarkReader(b *testing.B) {
 	b.SetBytes(1e6)
 	b.StartTimer()
 	for i := 0; i < b.N; i++ {
-		rw := NewRateReader(rand.Reader, 2e5, time.Second)
+		rw := RateLimitedReader(rand.Reader, 2e5, time.Second)
 		rw.Read(make([]byte, 1e6))
 		rw.Close()
 	}
