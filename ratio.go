@@ -87,7 +87,7 @@ func (rl *rateLimiter) close() {
 }
 
 // Returns a rate limited io.Writer, allowing to write up to size bytes per duration.
-func NewRateWriter(w io.Writer, size int, duration time.Duration) io.WriteCloser {
+func RateLimitedWriter(w io.Writer, size int, duration time.Duration) io.WriteCloser {
 	rl := &rateLimiter{
 		action: func(p []byte) (int, error) {
 			return w.Write(p)
@@ -102,7 +102,7 @@ func NewRateWriter(w io.Writer, size int, duration time.Duration) io.WriteCloser
 }
 
 // Returns a rate limited io.Reader, allowing to read up to size bytes per duration.
-func NewRateReader(r io.Reader, size int, duration time.Duration) io.ReadCloser {
+func RateLimitedReader(r io.Reader, size int, duration time.Duration) io.ReadCloser {
 	rl := &rateLimiter{
 		action: func(p []byte) (int, error) {
 			return r.Read(p)
