@@ -84,7 +84,7 @@ func (rl *rateLimiter) record(p []byte) (int, error) {
 
 func (rl *rateLimiter) close() {
 	if rl.op != nil {
-		rl.op.values <- values{rl.written, io.EOF}
+		rl.op.values <- values{rl.op.written, io.EOF}
 	}
 }
 
@@ -129,7 +129,7 @@ func (rl *rateLimiter) Write(p []byte) (int, error) {
 func (rl *rateLimiter) Close() error {
 	select {
 	case <-rl.stop:
-		return io.EOF
+		return nil
 	default:
 	}
 	close(rl.stop)
