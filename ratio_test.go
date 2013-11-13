@@ -21,7 +21,6 @@ func TestWriter(t *testing.T) {
 	}
 }
 
-
 func TestReader(t *testing.T) {
 	buf := new(bytes.Buffer)
 	rr := RateLimitedReader(strings.NewReader("aloha"), 2, time.Millisecond)
