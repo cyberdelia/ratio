@@ -1,4 +1,13 @@
-// Rate limited io
+/*
+Rate limited io
+
+To create a rate limited io.Writer:
+
+	// Create a new rate-limited writer.
+	rw := ratio.RateLimitedWriter(w, 10e6, time.Second)
+	io.Copy(rw, reader)
+
+*/
 package ratio
 
 import (
