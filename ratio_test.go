@@ -5,28 +5,41 @@ import (
 	"crypto/rand"
 	"io"
 	"io/ioutil"
-	"strings"
 	"testing"
+	"testing/quick"
 	"time"
 )
 
 func TestWriter(t *testing.T) {
-	buf := new(bytes.Buffer)
-	rw := RateLimitedWriter(buf, 2, time.Millisecond)
-	defer rw.Close()
-	io.Copy(rw, strings.NewReader("aloha"))
-	if buf.String() != "aloha" {
-		t.Fatalf("'%s' don't match '%s'", buf.String(), "aloha")
+	writer := func(payload []byte) bool {
+		buf := new(bytes.Buffer)
+
+		rw := RateLimitedWriter(buf, 2, time.Millisecond)
+		defer rw.Close()
+
+		io.Copy(rw, bytes.NewReader(payload))
+		return bytes.Equal(buf.Bytes(), payload)
+	}
+	if err := quick.Check(writer, nil); err != nil {
+		t.Error(err)
 	}
 }
 
 func TestReader(t *testing.T) {
-	buf := new(bytes.Buffer)
-	rr := RateLimitedReader(strings.NewReader("aloha"), 2, time.Millisecond)
-	defer rr.Close()
-	io.Copy(buf, rr)
-	if buf.String() != "aloha" {
-		t.Fatalf("'%s' don't match '%s'", buf.String(), "aloha")
+	reader := func(payload []byte) bool {
+		buf := new(bytes.Buffer)
+
+		rr := RateLimitedReader(bytes.NewBuffer(payload), 2, time.Millisecond)
+		defer rr.Close()
+
+		if _, err := io.Copy(buf, rr); err != nil {
+			return false
+		}
+
+		return bytes.Equal(buf.Bytes(), payload)
+	}
+	if err := quick.Check(reader, nil); err != nil {
+		t.Error(err)
 	}
 }
 
