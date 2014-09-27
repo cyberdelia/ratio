@@ -15,6 +15,18 @@ import (
 	"time"
 )
 
+const (
+	step = 1000
+	KB   = iota * step
+	MB   = KB * step
+	GB   = MB * step
+	TB   = GB * step
+	PB   = TB * step
+	EB   = PB * step
+	ZB   = EB * step
+	YB   = ZB * step
+)
+
 type values struct {
 	n   int
 	err error
