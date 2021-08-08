@@ -43,6 +43,13 @@ func TestReader(t *testing.T) {
 	}
 }
 
+func ExampleRateLimitedWriter() {
+	buf := make([]byte, 2*MB)
+	rw := RateLimitedWriter(ioutil.Discard, 1*MB, time.Second)
+	rw.Write(buf)
+	rw.Close()
+}
+
 func BenchmarkWriter(b *testing.B) {
 	b.StopTimer()
 	buf := make([]byte, 2*MB)
@@ -53,6 +60,13 @@ func BenchmarkWriter(b *testing.B) {
 		rw.Write(buf)
 		rw.Close()
 	}
+}
+
+func ExampleRateLimitedReader() {
+	buf := make([]byte, 2*MB)
+	rw := RateLimitedReader(rand.Reader, 1*MB, time.Second)
+	rw.Read(buf)
+	rw.Close()
 }
 
 func BenchmarkReader(b *testing.B) {

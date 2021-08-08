@@ -4,7 +4,7 @@ Package ratio allows to rate limits reads or writes.
 To create a rate limited io.Writer:
 
 	// Create a new rate-limited writer.
-	rw := ratio.RateLimitedWriter(w, 10e6, time.Second)
+	rw := ratio.RateLimitedWriter(w, 1*MB, time.Second)
 	io.Copy(rw, reader)
 
 */
