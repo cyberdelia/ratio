@@ -1,5 +1,5 @@
 /*
-Package ratio allows to make rate limited i/o.
+Package ratio allows to rate limits reads or writes.
 
 To create a rate limited io.Writer:
 
